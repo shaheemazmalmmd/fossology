@@ -1,6 +1,6 @@
 [
     {
-        "rf_shortname": "GPL-2.0-with-autoconf-exception",
+        "rf_shortname": "GPL-2.0-only WITH Autoconf-exception-3.0",
         "rf_text": "insert GPL v2 license text here\n\nAutoconf Exception\n\nAs a special exception, the Free Software Foundation gives unlimited permission to copy, distribute and modify the configure scripts that are the output of Autoconf. You need not follow the terms of the GNU General Public License when using or distributing such scripts, even though portions of the text of Autoconf appear in them. The GNU General Public License (GPL) does govern all other use of the material that constitutes the Autoconf program.\n\nCertain portions of the Autoconf source text are designed to be copied (in certain cases, depending on the input) into the output of Autoconf. We call these the \"data\" portions. The rest of the Autoconf source text consists of comments plus executable code that decides which of the data portions to output in any given case. We call these comments and executable code the \"non-data\" portions. Autoconf never copies any of the non-data portions into its output.\n\nThis special exception to the GPL applies to versions of Autoconf released by the Free Software Foundation. When you make and distribute a modified version of Autoconf, you may extend this special exception to the GPL to apply to your modified version as well, *unless* your modified version has the potential to copy into its output some of the text that was the non-data portion of the version that you started with. (In other words, unless your change moves or copies text from the non-data portions to the data portions.) If your modification has such potential, you must delete any notice of this special exception to the GPL from your modified version.\n\n",
         "rf_url": "http:\/\/ac-archive.sourceforge.net\/doc\/copyright.html",
         "rf_add_date": null,
@@ -18,7 +18,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -115,7 +115,30 @@
         "rf_licensetype": "Weak Copyleft"
     },
     {
-        "rf_shortname": "GPL-2.0-with-classpath-exception",
+        "rf_shortname": "GPL-3.0-only WITH Classpath-exception-2.0",
+        "rf_text": "insert GPL v3 license text here\n\nClass Path Exception\n\nLinking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions of the GNU General Public License cover the whole combination.\n\nAs a special exception, the copyright holders of this library give you permission to link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this library, you may extend this exception to your version of the library, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.\n\n",
+        "rf_url": "https://www.gnu.org/software/classpath/license.html",
+        "rf_add_date": null,
+        "rf_copyleft": null,
+        "rf_OSIapproved": null,
+        "rf_fullname": "GNU General Public License v3.0 w/Classpath exception",
+        "rf_FSFfree": null,
+        "rf_GPLv2compatible": null,
+        "rf_GPLv3compatible": null,
+        "rf_notes": null,
+        "rf_Fedora": null,
+        "marydone": "f",
+        "rf_active": "t",
+        "rf_text_updatable": "f",
+        "rf_detector_type": 1,
+        "rf_source": null,
+        "rf_risk": null,
+        "rf_spdx_compatible": "t",
+        "rf_flag": "1",
+        "rf_licensetype": "Weak Copyleft"
+    },
+    {
+        "rf_shortname": "GPL-2.0-only WITH Classpath-exception-2.0",
         "rf_text": "insert GPL v2 license text here\n\nClass Path Exception\n\nLinking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions of the GNU General Public License cover the whole combination.\n\nAs a special exception, the copyright holders of this library give you permission to link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this library, you may extend this exception to your version of the library, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.\n\n",
         "rf_url": "https:\/\/www.gnu.org\/software\/classpath\/license.html",
         "rf_add_date": null,
@@ -133,7 +156,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Weak Copyleft"
     },
@@ -5658,7 +5681,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-3.0-with-GCC-exception",
+        "rf_shortname": "GPL-3.0-only WITH GCC-exception-3.1",
         "rf_text": "\ufeffinsert GPL v3 text here\n\nGCC RUNTIME LIBRARY EXCEPTION\n\nVersion 3.1, 31 March 2009\n\nGeneral information: http:\/\/www.gnu.org\/licenses\/gcc-exception.html\n\nCopyright (C) 2009 Free Software Foundation, Inc. <http:\/\/fsf.org\/>\n\nEveryone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.\n\nThis GCC Runtime Library Exception (\"Exception\") is an additional permission under section 7 of the GNU General Public License, version 3 (\"GPLv3\"). It applies to a given file (the \"Runtime Library\") that bears a notice placed by the copyright holder of the file stating that the file is governed by GPLv3 along with this Exception.\n\nWhen you use GCC to compile a program, GCC may combine portions of certain GCC header files and runtime libraries with the compiled program. The purpose of this Exception is to allow compilation of non-GPL (including proprietary) programs to use, in this way, the header files and runtime libraries covered by this Exception.\n\n   0. Definitions.\n\n   A file is an \"Independent Module\" if it either requires the Runtime Library for execution after a Compilation Process, or makes use of an interface provided by the Runtime Library, but is not otherwise based on the Runtime Library.\n\n   \"GCC\" means a version of the GNU Compiler Collection, with or without modifications, governed by version 3 (or a specified later version) of the GNU General Public License (GPL) with the option of using any subsequent versions published by the FSF.\n\n   \"GPL-compatible Software\" is software whose conditions of propagation, modification and use would permit combination with GCC in accord with the license of GCC.\n\n   \"Target Code\" refers to output from any compiler for a real or virtual target processor architecture, in executable form or suitable for input to an assembler, loader, linker and\/or execution phase. Notwithstanding that, Target Code does not include data in any format that is used as a compiler intermediate representation, or used for producing a compiler intermediate representation.\n\n   The \"Compilation Process\" transforms code entirely represented in non-intermediate languages designed for human-written code, and\/or in Java Virtual Machine byte code, into Target Code. Thus, for example, use of source code generators and preprocessors need not be considered part of the Compilation Process, since the Compilation Process can be understood as starting with the output of the generators or preprocessors.\n\n   A Compilation Process is \"Eligible\" if it is done using GCC, alone or with other GPL-compatible software, or if it is done without using any work based on GCC. For example, using non-GPL-compatible Software to optimize any GCC intermediate representations would not qualify as an Eligible Compilation Process.\n\n   1. Grant of Additional Permission.\n\n   You have permission to propagate a work of Target Code formed by combining the Runtime Library with Independent Modules, even if such propagation would otherwise violate the terms of GPLv3, provided that all Target Code was generated by Eligible Compilation Processes. You may then convey such a combination under terms of your choice, consistent with the licensing of the Independent Modules.\n\n   2. No Weakening of GCC Copyleft.\n\nThe availability of this Exception does not imply any general presumption that third-party software is unaffected by the copyleft requirements of the license of GCC.\n\n",
         "rf_url": "https:\/\/www.gnu.org\/licenses\/gcc-exception-3.1.html",
         "rf_add_date": null,
@@ -5676,7 +5699,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -5727,7 +5750,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-3.0-with-autoconf-exception",
+        "rf_shortname": "GPL-3.0-only WITH Autoconf-exception-3.0",
         "rf_text": "insert GPL v3 text here\n\nAUTOCONF CONFIGURE SCRIPT EXCEPTION\n\nVersion 3.0, 18 August 2009\n\nCopyright \u00a9 2009 Free Software Foundation, Inc. >http:\/\/fsf.org\/<\n\nEveryone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.\n\nThis Exception is an additional permission under section 7 of the GNU General Public License, version 3 (\"GPLv3\"). It applies to a given file that bears a notice placed by the copyright holder of the file stating that the file is governed by GPLv3 along with this Exception.\n\nThe purpose of this Exception is to allow distribution of Autoconf's typical output under terms of the recipient's choice (including proprietary).\n\n   0. Definitions.\n\n   \"Covered Code\" is the source or object code of a version of Autoconf that is a covered work under this License.\n\n   \"Normally Copied Code\" for a version of Autoconf means all parts of its Covered Code which that version can copy from its code (i.e., not from its input file) into its minimally verbose, non-debugging and non-tracing output.\n\n   \"Ineligible Code\" is Covered Code that is not Normally Copied Code.\n\n   1. Grant of Additional Permission.\n\n   You have permission to propagate output of Autoconf, even if such propagation would otherwise violate the terms of GPLv3. However, if by modifying Autoconf you cause any Ineligible Code of the version you received to become Normally Copied Code of your modified version, then you void this Exception for the resulting covered work. If you convey that resulting covered work, you must remove this Exception in accordance with the second paragraph of Section 7 of GPLv3.\n\n   2. No Weakening of Autoconf Copyleft.\n\n   The availability of this Exception does not imply any general presumption that third-party software is unaffected by the copyleft requirements of the license of Autoconf.\n\n   ",
         "rf_url": "https:\/\/www.gnu.org\/licenses\/autoconf-exception-3.0.html",
         "rf_add_date": null,
@@ -5745,7 +5768,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -5796,7 +5819,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-2.0-with-bison-exception",
+        "rf_shortname": "GPL-2.0-only WITH Bison-exception-2.2",
         "rf_text": "Bison Exception\n\nAs a special exception, you may create a larger work that contains part or all of the Bison parser skeleton and distribute that work under terms of your choice, so long as that work isn't itself a parser generator using the skeleton or a modified version thereof as a parser skeleton. Alternatively, if you modify or redistribute the parser skeleton itself, you may (at your option) remove this special exception, which will cause the skeleton and the resulting Bison output files to be licensed under the GNU General Public License without this special exception.\n\nThis special exception was added by the Free Software Foundation in version 2.2 of Bison.\n\n",
         "rf_url": "http:\/\/git.savannah.gnu.org\/cgit\/bison.git\/tree\/data\/yacc.c?id=193d7c7054ba7197b0789e14965b739162319b5e#n141",
         "rf_add_date": null,
@@ -5814,7 +5837,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -6187,7 +6210,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-2.0-with-font-exception",
+        "rf_shortname": "GPL-2.0-only WITH Font-exception-2.0",
         "rf_text": "insert GPL v2 license text here\n\nFont Exception\n\nAs a special exception, if you create a document which uses this font, and embed this font or unaltered portions of this font into the document, this font does not by itself cause the resulting document to be covered by the GNU General Public License. This exception does not however invalidate any other reasons why the document might be covered by the GNU General Public License. If you modify this font, you may extend this exception to your version of the font, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.\n\n",
         "rf_url": "https:\/\/www.gnu.org\/licenses\/gpl-faq.html#FontException",
         "rf_add_date": null,
@@ -6205,7 +6228,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -6233,7 +6256,7 @@
         "rf_licensetype": "Strong Copyleft"
     },
     {
-        "rf_shortname": "GPL-2.0-with-GCC-exception",
+        "rf_shortname": "GPL-2.0-only WITH GCC-exception-3.1",
         "rf_text": "insert GPL v2 license text here\n\nGCC Linking Exception\n\nIn addition to the permissions in the GNU General Public License, the Free Software Foundation gives you unlimited permission to link the compiled version of this file into combinations with other programs, and to distribute those combinations without any restriction coming from the use of this file. (The General Public License restrictions do apply in other respects; for example, they cover modification of the file, and distribution when not linked into a combine executable.\n\n",
         "rf_url": "https:\/\/gcc.gnu.org\/git\/?p=gcc.git;a=blob;f=gcc\/libgcc1.c;h=762f5143fc6eed57b6797c82710f3538aa52b40b;hb=cb143a3ce4fb417c68f5fa2691a1b1b1053dfba9#l10",
         "rf_add_date": null,
@@ -6251,7 +6274,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -7153,7 +7176,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-2.0+-with-bison-exception",
+        "rf_shortname": "GPL-2.0-or-later WITH Bison-exception-2.2",
         "rf_text": "insert GPL v2+ text here \n\nBison Exception \n\nAs a special exception, you may create a larger work that contains part or all of the Bison parser skeleton and distribute that work under terms of your choice, so long as that work isn't itself a parser generator using the skeleton or a modified version thereof as a parser skeleton. Alternatively, if you modify or redistribute the parser skeleton itself, you may (at your option) remove this special exception, which will cause the skeleton and the resulting Bison output files to be licensed under the GNU General Public License without this special exception. \n\nThis special exception was added by the Free Software Foundation in version 2.2 of Bison.",
         "rf_url": "",
         "rf_add_date": null,
@@ -7171,12 +7194,12 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
     {
-        "rf_shortname": "GPL-3.0-with-bison-exception",
+        "rf_shortname": "GPL-3.0-only WITH Bison-exception-2.2",
         "rf_text": "insert GPL v3 text here \n\nBison Exception \n\nAs a special exception, you may create a larger work that contains part or all of the Bison parser skeleton and distribute that work under terms of your choice, so long as that work isn't itself a parser generator using the skeleton or a modified version thereof as a parser skeleton. Alternatively, if you modify or redistribute the parser skeleton itself, you may (at your option) remove this special exception, which will cause the skeleton and the resulting Bison output files to be licensed under the GNU General Public License without this special exception. \n\nThis special exception was added by the Free Software Foundation in version 2.2 of Bison.",
         "rf_url": "",
         "rf_add_date": null,
@@ -7194,12 +7217,12 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
     {
-        "rf_shortname": "GPL-3.0+-with-bison-exception",
+        "rf_shortname": "GPL-3.0-or-later WITH Bison-exception-2.2",
         "rf_text": "insert GPL v3+ text here \n\nBison Exception \n\nAs a special exception, you may create a larger work that contains part or all of the Bison parser skeleton and distribute that work under terms of your choice, so long as that work isn't itself a parser generator using the skeleton or a modified version thereof as a parser skeleton. Alternatively, if you modify or redistribute the parser skeleton itself, you may (at your option) remove this special exception, which will cause the skeleton and the resulting Bison output files to be licensed under the GNU General Public License without this special exception. \n\nThis special exception was added by the Free Software Foundation in version 2.2 of Bison.",
         "rf_url": "",
         "rf_add_date": null,
@@ -7217,7 +7240,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Strong Copyleft"
     },
@@ -8441,7 +8464,7 @@
         "rf_licensetype": "Permissive"
     },
     {
-        "rf_shortname": "GPL-3.0+-with-classpath-exception",
+        "rf_shortname": "GPL-3.0-or-later WITH Classpath-exception-2.0",
         "rf_text": "insert GPL v3+ license text here \n\nClass Path Exception \n\nLinking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions of the GNU General Public License cover the whole combination. \n\nAs a special exception, the copyright holders of this library give you permission to link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this library, you may extend this exception to your version of the library, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.",
         "rf_url": "",
         "rf_add_date": null,
@@ -8459,12 +8482,12 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Weak Copyleft"
     },
     {
-        "rf_shortname": "GPL-2.0+-with-classpath-exception",
+        "rf_shortname": "GPL-2.0-or-later WITH Classpath-exception-2.0",
         "rf_text": "insert GPL v2+ text here \n\nClass Path Exception \n\nLinking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions of the GNU General Public License cover the whole combination. \n\nAs a special exception, the copyright holders of this library give you permission to link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this library, you may extend this exception to your version of the library, but you are not obligated to do so. If you do not wish to do so, delete this exception statement from your version.",
         "rf_url": "",
         "rf_add_date": null,
@@ -8482,7 +8505,7 @@
         "rf_detector_type": 1,
         "rf_source": null,
         "rf_risk": null,
-        "rf_spdx_compatible": "f",
+        "rf_spdx_compatible": "t",
         "rf_flag": "1",
         "rf_licensetype": "Weak Copyleft"
     },
