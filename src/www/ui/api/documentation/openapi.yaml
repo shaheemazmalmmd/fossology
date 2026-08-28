@@ -5568,6 +5568,12 @@ components:
         ojo_decider:
           type: boolean
           description: Scanners matches if Ojo or REUSE.Software findings are no contradiction with other findings.
+        thesmo_decider:
+          type: boolean
+          description: >
+            Conclude where Thesmo names the same licenses as the other scanners and
+            contradicts none of them. Opt-in, and it schedules nomos, monk and
+            thesmo, because a scanner that did not run contradicts nothing.
         conclude_license_type:
           type: string
           description: |
@@ -5905,6 +5911,9 @@ components:
         kotoba_bulk:
           type: boolean
           description: Should Kotoba Bulk Analysis be run on this upload.
+        thesmo:
+          type: boolean
+          description: Should Thesmo Analysis be run on this upload.
     Reuser:
       type: object
       properties:

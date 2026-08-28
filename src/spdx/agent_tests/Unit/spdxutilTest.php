@@ -88,6 +88,58 @@ class spdxutilTest extends \PHPUnit\Framework\TestCase
    * -# Call addPrefixOnDemand() with no check
    * -# Check if original string is returned
    */
+  /**
+   * @test
+   * -# A set of licenses with no marker states obligations, so they join
+   *    with AND.
+   */
+  public function testImplodeLicensesWithoutMarkerIsAnd()
+  {
+    $this->assertEquals("MIT", SpdxUtils::implodeLicenses(["MIT"]));
+    $this->assertEquals("BSD-3-Clause AND MIT",
+      SpdxUtils::implodeLicenses(["MIT", "BSD-3-Clause"]));
+    $this->assertEquals("Apache-2.0 AND BSD-3-Clause AND MIT",
+      SpdxUtils::implodeLicenses(["MIT", "BSD-3-Clause", "Apache-2.0"]));
+  }
+
+  /**
+   * @test
+   * -# The marker says the file offers a choice, so the licenses beside it
+   *    join with OR -- for any number of them, not only two.
+   * -# The marker is never exported as a member. Left among them it became a
+   *    conjunct, which is not a valid expression and asserts the terms of a
+   *    license that does not exist.
+   */
+  public function testImplodeLicensesWithMarkerIsOrAndDropsTheMarker()
+  {
+    $this->assertEquals("BSD-3-Clause OR MIT",
+      SpdxUtils::implodeLicenses(["MIT", "BSD-3-Clause", "Dual-license"]));
+    $this->assertEquals("Apache-2.0 OR BSD-3-Clause OR MIT",
+      SpdxUtils::implodeLicenses(["MIT", "BSD-3-Clause", "Apache-2.0", "Dual-license"]));
+    $this->assertEquals("Apache-2.0 OR BSD-3-Clause OR ISC OR MIT",
+      SpdxUtils::implodeLicenses(
+        ["MIT", "BSD-3-Clause", "Apache-2.0", "ISC", "Dual-license"]));
+    foreach (["Dual-license", "LicenseRef-Dual-license",
+              "LicenseRef-fossology-Dual-license"] as $marker) {
+      $this->assertStringNotContainsStringIgnoringCase("dual-license",
+        SpdxUtils::implodeLicenses(["MIT", "BSD-3-Clause", "Apache-2.0", $marker]),
+        "the marker was exported as a member");
+    }
+  }
+
+  /**
+   * @test
+   * -# A marker with one license names that license; the choice has one side.
+   * -# A marker alone names no license at all, and must not export itself as
+   *    the answer.
+   */
+  public function testImplodeLicensesMarkerWithTooFewMembers()
+  {
+    $this->assertEquals("MIT", SpdxUtils::implodeLicenses(["MIT", "Dual-license"]));
+    $this->assertEquals("", SpdxUtils::implodeLicenses(["Dual-license"]));
+    $this->assertEquals("", SpdxUtils::implodeLicenses([]));
+  }
+
   public function testAddPrefixOnDemandNoChecker()
   {
     assertThat(SpdxUtils::addPrefixOnDemand("LIC1"), equalTo("LIC1"));

@@ -7000,7 +7000,7 @@ char *parseLicenses(char *filetext, int size, scanres_t *scp,
    * Alliance for Open Media Patent License
    */
   if (INFILE(_LT_AOM_Patent)) {
-    INTERESTING("AOM-Patent-1.0");
+    INTERESTING("AOMPL-1.0");
   }
   cleanLicenceBuffer();
   /*

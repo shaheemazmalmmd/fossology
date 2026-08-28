@@ -90,7 +90,44 @@ class SpdxUtils
   }
 
   /**
-   * @brief Implode licenses with "AND" or "OR"
+   * @brief Is this name the dual-license marker rather than a license?
+   *
+   * The marker records that a file offers a choice; it is not a license and
+   * has no terms. It is matched in its bare form and under either reference
+   * prefix, since which one a row carries depends on how it was stored.
+   * @param string $license
+   * @return bool
+   */
+  static public function isDualLicenseMarker($license)
+  {
+    return StringOperation::stringStartsWith($license, "Dual-license") ||
+      StringOperation::stringStartsWith($license,
+        LicenseRef::SPDXREF_PREFIX . "Dual-license") ||
+      StringOperation::stringStartsWith($license,
+        LicenseRef::SPDXREF_PREFIX_FOSSOLOGY . "Dual-license");
+  }
+
+  /**
+   * @brief Implode licenses into one SPDX expression.
+   *
+   * The dual-license marker says the file offers a choice, so the licenses
+   * beside it are joined with `OR`; without it they are obligations and are
+   * joined with `AND`.
+   *
+   * The marker is removed either way, because it is not a license. Left among
+   * the members it was exported as a conjunct -- `A AND B AND Dual-license` --
+   * which is not a valid expression and tells a reader to obey the terms of a
+   * license that does not exist. That happened for every count except exactly
+   * three, which was the only case handled.
+   *
+   * **A flat `OR` is the most these rows can say.** A marker beside three
+   * licenses is usually `A OR B OR C` but can be `(A OR B) AND C`, and a set
+   * of per-license rows cannot tell the two apart: the relation was never
+   * stored, only the members and the fact that some choice existed. Where that
+   * distinction matters the expression has to be carried as text from the
+   * scanner through to the decision, which is a schema change and not this
+   * function's business.
+   *
    * @param string[] $licenses
    * @return string
    */
@@ -103,16 +140,20 @@ class SpdxUtils
     $licenses = self::addPrefixOnDemandList($licenses);
     sort($licenses, SORT_NATURAL | SORT_FLAG_CASE);
 
-    if (count($licenses) == 3) {
-      foreach ($licenses as $index => $lic) {
-        if (StringOperation::stringStartsWith($lic, "Dual-license") ||
-            StringOperation::stringStartsWith($lic, LicenseRef::SPDXREF_PREFIX . "Dual-license") ||
-            StringOperation::stringStartsWith($lic, LicenseRef::SPDXREF_PREFIX_FOSSOLOGY . "Dual-license")) {
-          return $licenses[$index===0?1:0] . " OR " . $licenses[$index===2?1:2];
-        }
-      }
+    $members = array_values(array_filter($licenses, function ($lic) {
+      return !SpdxUtils::isDualLicenseMarker($lic);
+    }));
+    $isChoice = count($members) < count($licenses);
+
+    if (count($members) == 0) {
+      // the marker on its own names no license, and saying "Dual-license"
+      // here would export the marker as the answer
+      return "";
     }
-    return implode(" AND ", $licenses);
+    if (count($members) == 1) {
+      return $members[0];
+    }
+    return implode($isChoice ? " OR " : " AND ", $members);
   }
 
   /**
