@@ -122,6 +122,17 @@ class DeciderAgentPlugin extends AgentPlugin
           $dependencies[] = 'agent_ojo';
           $rulebits |= 0x10;
           break;
+        case 'thesmoNoContradiction':
+          // The rule reads monk as well as nomos, so it has to depend on both:
+          // an absent scanner contributes no findings and so contradicts
+          // nothing, which would make the check weaker than it looks.
+          if ($checkAgentNomos) {
+            $dependencies[] = 'agent_nomos';
+          }
+          $dependencies[] = 'agent_monk';
+          $dependencies[] = 'agent_thesmo';
+          $rulebits |= 0x400;   // DeciderAgent::RULES_THESMO_NO_CONTRADICTION
+          break;
         case 'copyrightDeactivation':
           if ($checkAgentCopyright) {
             $dependencies[] = 'agent_copyright';

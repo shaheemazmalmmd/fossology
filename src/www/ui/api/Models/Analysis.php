@@ -94,6 +94,11 @@ class Analysis
    * Whether to schedule kotoba agent or not
    */
   private $kotoba;
+  /**
+   * @var boolean $thesmo
+   * Whether to schedule thesmo agent or not
+   */
+  private $thesmo;
 
   /**
    * Analysis constructor.
@@ -112,9 +117,10 @@ class Analysis
    * @param boolean $ipra
    * @param boolean $softwareHeritage
    * @param boolean $kotoba
+   * @param boolean $thesmo
    */
   public function __construct($bucket = false, $copyright = false, $ecc = false, $keyword = false,
-    $mimetype = false, $monk = false, $nomos = false, $ojo = false, $reso = false, $pkgagent = false, $compatibility = false, $scanoss = false, $ipra = false, $softwareHeritage = false, $kotoba = false)
+    $mimetype = false, $monk = false, $nomos = false, $ojo = false, $reso = false, $pkgagent = false, $compatibility = false, $scanoss = false, $ipra = false, $softwareHeritage = false, $kotoba = false, $thesmo = false)
   {
     $this->bucket = $bucket;
     $this->copyright = $copyright;
@@ -131,6 +137,7 @@ class Analysis
     $this->softwareHeritage = $softwareHeritage;
     $this->compatibility = $compatibility;
     $this->kotoba = $kotoba;
+    $this->thesmo = $thesmo;
   }
 
   /**
@@ -169,7 +176,8 @@ class Analysis
       ($version == ApiVersion::V2 ? 'ipra' : 'patent') => 'ipra',
       ($version == ApiVersion::V2 ? 'softwareHeritage' : "heritage") => 'softwareHeritage',
       'compatibility' => 'compatibility',
-      ($version == ApiVersion::V2 ? 'kotoba' : 'kotoba_bulk') => 'kotoba'
+      ($version == ApiVersion::V2 ? 'kotoba' : 'kotoba_bulk') => 'kotoba',
+      'thesmo' => 'thesmo'
     ];
 
     $this->setBooleanProperties($analysisArray, $propertyMap);
@@ -198,7 +206,8 @@ class Analysis
       'ipra' => 'ipra',
       'softwareHeritage' => 'softwareHeritage',
       'compatibility' => 'compatibility',
-      'kotoba' => 'kotoba'
+      'kotoba' => 'kotoba',
+      'thesmo' => 'thesmo'
     ];
 
     foreach ($propertyMap as $key => $property) {
@@ -330,6 +339,14 @@ class Analysis
     return $this->kotoba;
   }
 
+  /**
+   * @return boolean
+   */
+  public function getThesmo()
+  {
+    return $this->thesmo;
+  }
+
   ////// Setters //////
   /**
    * @param boolean $bucket
@@ -452,6 +469,14 @@ class Analysis
   }
 
   /**
+   * @param boolean $thesmo
+   */
+  public function setThesmo($thesmo)
+  {
+    $this->thesmo = filter_var($thesmo, FILTER_VALIDATE_BOOLEAN);
+  }
+
+  /**
    * Get the object as an associative array
    * @return array
    */
@@ -473,7 +498,8 @@ class Analysis
         "ipra"    => $this->ipra,
         "softwareHeritage" => $this->softwareHeritage,
         "compatibility" => $this->compatibility,
-        "kotoba" => $this->kotoba
+        "kotoba" => $this->kotoba,
+        "thesmo" => $this->thesmo
       ];
     } else {
       return [
@@ -491,7 +517,8 @@ class Analysis
         "patent"    => $this->ipra,
         "heritage" => $this->softwareHeritage,
         "compatibility" => $this->compatibility,
-        "kotoba_bulk" => $this->kotoba
+        "kotoba_bulk" => $this->kotoba,
+        "thesmo" => $this->thesmo
       ];
     }
   }

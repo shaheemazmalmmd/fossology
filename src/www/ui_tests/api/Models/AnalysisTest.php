@@ -182,7 +182,8 @@ class AnalysisTest extends \PHPUnit\Framework\TestCase
         "ipra"                 => true,
         "softwareHeritage"     => true,
         "compatibility"        => true,
-        "kotoba"           => true
+        "kotoba"           => true,
+        "thesmo"           => true
       ];
     } else {
       $expectedArray = [
@@ -200,16 +201,39 @@ class AnalysisTest extends \PHPUnit\Framework\TestCase
         "patent"                 => true,
         "heritage"               => true,
         "compatibility"          => true,
-        "kotoba_bulk"            => true
+        "kotoba_bulk"            => true,
+        "thesmo"                 => true
       ];
     }
 
-    $actualObject = new Analysis(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+    $actualObject = new Analysis(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
     $this->assertEquals($expectedArray, $actualObject->getArray($version));
   }
 
   ////// New Getter and Setter Tests //////
+
+  /**
+   * @test
+   * -# Test getter for thesmo
+   */
+  public function testGetThesmo()
+  {
+    $analysis = new Analysis(false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, true);
+    $this->assertTrue($analysis->getThesmo());
+  }
+
+  /**
+   * @test
+   * -# Test setter for thesmo
+   */
+  public function testSetThesmo()
+  {
+    $analysis = new Analysis();
+    $analysis->setThesmo(true);
+    $this->assertTrue($analysis->getThesmo());
+  }
 
   /**
    * @test

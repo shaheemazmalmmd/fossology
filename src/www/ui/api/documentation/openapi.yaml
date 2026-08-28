@@ -5905,6 +5905,9 @@ components:
         kotoba_bulk:
           type: boolean
           description: Should Kotoba Bulk Analysis be run on this upload.
+        thesmo:
+          type: boolean
+          description: Should Thesmo Analysis be run on this upload.
     Reuser:
       type: object
       properties:

@@ -156,7 +156,8 @@ class UserTest extends TestCase
           "scanoss"                => false,
           "reso"                   => false,
           "compatibility"          => false,
-          "kotoba_bulk"            => false
+          "kotoba_bulk"            => false,
+          "thesmo"                 => false
         ]
       ];
     } else{
@@ -184,7 +185,8 @@ class UserTest extends TestCase
           "scanoss"              => false,
           "reso"                 => false,
           "compatibility"        => false,
-          "kotoba"           => false
+          "kotoba"           => false,
+          "thesmo"           => false
         ]
       ];
     }
