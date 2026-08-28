@@ -87,6 +87,7 @@ class DeciderAgent extends Agent
   const RULES_LICENSE_TYPE_CONCLUSION = 0x80;
   const RULES_KOTOBA_NO_CONTRADICTION = 0x100;
   const RULES_RESO_NO_CONTRADICTION = 0x200;
+  const RULES_THESMO_NO_CONTRADICTION = 0x400;
   const RULES_ALL = self::RULES_NOMOS_IN_MONK | self::RULES_NOMOS_MONK_NINKA |
     self::RULES_WIP_SCANNER_UPDATES |
     self::RULES_OJO_NO_CONTRADICTION | self::RULES_RESO_NO_CONTRADICTION |
@@ -258,6 +259,10 @@ class DeciderAgent extends Agent
 
     if (!$haveDecided && ($this->activeRules&self::RULES_RESO_NO_CONTRADICTION) == self::RULES_RESO_NO_CONTRADICTION) {
       $haveDecided = $this->autodecideIfResoMatchesNoContradiction($itemTreeBounds, $projectedScannerMatches);
+    }
+
+    if (!$haveDecided && ($this->activeRules&self::RULES_THESMO_NO_CONTRADICTION) == self::RULES_THESMO_NO_CONTRADICTION) {
+      $haveDecided = $this->autodecideIfThesmoMatchesNoContradiction($itemTreeBounds, $projectedScannerMatches);
     }
 
     if (!$haveDecided && ($this->activeRules&self::RULES_NOMOS_IN_MONK) == self::RULES_NOMOS_IN_MONK) {
@@ -580,6 +585,208 @@ class DeciderAgent extends Agent
         }, $licenseMatches[$scanner]);
     }
     return [];
+  }
+
+  /**
+   * @brief Names thesmo reports that are not identifications.
+   *
+   * The agent reports where a licence is stated as well as which one it is: a
+   * pointer to another file, a family with no member named, a choice, a bare
+   * mention of the public domain. Its own documentation says these "are not
+   * identifications and must not be read as one", so they cannot support an
+   * automatic clearing decision. The list is the shortname column of the
+   * agent's referential.tsv; anything else it reports is an identification.
+   */
+  const THESMO_NOT_IDENTIFICATIONS = array(
+    'See-file', 'See-file.LICENSE', 'See-file.COPYING', 'See-file.README',
+    'See-doc.OTHER', 'See-URL', 'UnclassifiedLicense', 'Dual-license',
+    'BSD', 'GPL', 'LGPL', 'MIT-style', 'Apache-style', 'X11-style',
+    'Zlib-style', 'ISC-style', 'Artistic-style', 'Python-style',
+    'Public-domain-ref', 'NOT-public-domain');
+
+  /**
+   * \brief Auto-conclude when thesmo and the other scanners agree.
+   *
+   * Not in RULES_ALL: thesmo is opt-in until its findings have been reviewed
+   * on real uploads.
+   *
+   * Agreement is read on the licences and exceptions the scanners name, not
+   * on how they write them: nomos has no WITH operator and reports a licence
+   * and its exception as two findings where thesmo reports one. The two say
+   * the same thing. Concluded that way the decision would carry all three
+   * rows, so the rows a WITH form subsumes are removed before the decision,
+   * and thesmo's pointers and family names -- which are not identifications
+   * -- with them.
+   * \param ItemTreeBounds $itemTreeBounds
+   * \param array $matches
+   * \return bool True if decided, false otherwise
+   */
+  private function autodecideIfThesmoMatchesNoContradiction(ItemTreeBounds $itemTreeBounds, $matches)
+  {
+    // The matches arrive grouped by licence. Agreement is a property of the
+    // file: a WITH form and the pair it stands for are different licence ids,
+    // so read group by group they can never meet. Fold the groups into one
+    // set of findings per agent first.
+    $byAgent = [];
+    foreach ($matches as $licenseMatches) {
+      foreach ($licenseMatches as $agent => $agentMatches) {
+        $byAgent[$agent] = array_merge(
+          array_key_exists($agent, $byAgent) ? $byAgent[$agent] : [], $agentMatches);
+      }
+    }
+    $subsumed = count($byAgent) > 0 ? $this->thesmoAgreement($byAgent) : null;
+    $agreed = $subsumed !== null;
+
+    if ($agreed) {
+      foreach (array_unique($subsumed) as $licenseId) {
+        $this->clearingDao->insertClearingEvent($itemTreeBounds->getItemId(),
+          $this->userId, $this->groupId, $licenseId, true, ClearingEventTypes::AGENT);
+      }
+      try {
+        $this->clearingDecisionProcessor->makeDecisionFromLastEvents(
+          $itemTreeBounds, $this->userId, $this->groupId,
+          DecisionTypes::IDENTIFIED, false);
+      } catch (\Exception $e) {
+        echo "Can not auto decide as file '" .
+          $itemTreeBounds->getItemId() . "' contains candidate license.\n";
+      }
+    }
+    return $agreed;
+  }
+
+  /**
+   * @brief A licence id as the conclusion map projects it.
+   * @param int $licenseId
+   * @return int
+   */
+  private function projectedId($licenseId)
+  {
+    return $this->licenseMap === null ? $licenseId
+      : $this->licenseMap->getProjectedId($licenseId);
+  }
+
+  /**
+   * \brief Whether thesmo and the other scanners name the same licences.
+   *
+   * Every finding is flattened to the licences and exceptions it names: a
+   * WITH form is its licence and its exception. The sets must be equal --
+   * nothing thesmo identifies may go uncorroborated, and nothing another
+   * scanner finds may be missing from thesmo. Only *identifications* count,
+   * from any scanner: a pointer or a family name is not one, and is recorded
+   * as removed rather than concluded.
+   *
+   * A WITH form binds an exception to one licence, and only thesmo says
+   * which. Where more than one licence could take it, the binding is
+   * thesmo's alone and is not concluded automatically unless another scanner
+   * reports the same WITH form.
+   *
+   * \param LicenseMatch[][] $licenseMatches
+   * \return int[]|null The licence ids to record as removed before deciding,
+   *                    or null where the scanners do not agree.
+   */
+  protected function thesmoAgreement($licenseMatches)
+  {
+    if (! array_key_exists('thesmo', $licenseMatches)) {
+      return null;
+    }
+    $identified = [];
+    $pointers = [];
+    $parts = [];
+    $withForms = [];
+    foreach ($licenseMatches['thesmo'] as $match) {
+      $ref = $match->getLicenseRef();
+      if ($ref === null) {
+        continue;
+      }
+      $id = $this->projectedId($match->getLicenseId());
+      $short = $ref->getShortName();
+      if (in_array($short, self::THESMO_NOT_IDENTIFICATIONS)) {
+        $pointers[] = $id;
+        continue;
+      }
+      $identified[] = $id;
+      if (strpos($short, ' WITH ') === false) {
+        $parts[] = $id;
+        continue;
+      }
+      list($licence, $exception) = explode(' WITH ', $short, 2);
+      $licenceRef = $this->licenseDao->getLicenseByShortName($licence, $this->groupId);
+      $exceptionRef = $this->licenseDao->getLicenseByShortName($exception, $this->groupId);
+      if ($licenceRef === null || $exceptionRef === null) {
+        return null;
+      }
+      $licenceId = $this->projectedId($licenceRef->getId());
+      $exceptionId = $this->projectedId($exceptionRef->getId());
+      $withForms[$id] = [$licenceId, $exceptionId];
+      $parts[] = $licenceId;
+      $parts[] = $exceptionId;
+    }
+    if (count($identified) == 0) {
+      return null;
+    }
+
+    // A pointer or a family name says where a licence is or which family it
+    // belongs to, never which licence: whichever scanner reports one, it takes
+    // no part in the agreement and is recorded as removed, or a file both
+    // scanners read as "see LICENSE" would either block the decision or be
+    // concluded as a licence called See-file.
+    $others = [];
+    foreach (array('nomos', 'monk') as $scanner) {
+      if (! array_key_exists($scanner, $licenseMatches)) {
+        continue;
+      }
+      foreach ($licenseMatches[$scanner] as $match) {
+        $otherId = $this->projectedId($match->getLicenseId());
+        $ref = $match->getLicenseRef();
+        if ($ref !== null && in_array($ref->getShortName(), self::THESMO_NOT_IDENTIFICATIONS)) {
+          $pointers[] = $otherId;
+          continue;
+        }
+        $others[] = $otherId;
+      }
+    }
+    $others = array_values(array_unique($others));
+    if (count($others) == 0) {
+      return null;
+    }
+    $othersFlat = [];
+    foreach ($others as $id) {
+      if (array_key_exists($id, $withForms)) {
+        $othersFlat[] = $withForms[$id][0];
+        $othersFlat[] = $withForms[$id][1];
+      } else {
+        $othersFlat[] = $id;
+      }
+    }
+    $parts = array_values(array_unique($parts));
+    $othersFlat = array_values(array_unique($othersFlat));
+    sort($parts);
+    sort($othersFlat);
+    if ($parts != $othersFlat) {
+      return null;
+    }
+
+    if (count($withForms) > 0) {
+      $exceptions = array_map(function ($w) { return $w[1]; }, $withForms);
+      $licences = count(array_diff($parts, $exceptions));
+      if ($licences > 1) {
+        foreach (array_keys($withForms) as $withId) {
+          if (! in_array($withId, $others)) {
+            return null;
+          }
+        }
+      }
+    }
+
+    $removable = array_values(array_unique($pointers));
+    foreach ($withForms as $withId => $pair) {
+      foreach ($pair as $partId) {
+        if (in_array($partId, $others)) {
+          $removable[] = $partId;
+        }
+      }
+    }
+    return array_values(array_unique($removable));
   }
 
   /**
