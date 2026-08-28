@@ -58,7 +58,10 @@ function getLegacyLicenseNames()
     'GPL-3.0+-with-classpath-exception' => 'GPL-3.0-or-later WITH Classpath-exception-2.0',
 
     /* Not valid SPDX idstrings. convertToSpdxId() prefixes at report time. */
-    'Alliance for Open Media Patent License 1.0' => 'AOM-Patent-1.0',
+    /* The patent licence is on no SPDX list, so its name is ours to choose;
+       AOMPL-1.0 is what the published analyses call it. */
+    'Alliance for Open Media Patent License 1.0' => 'AOMPL-1.0',
+    'AOM-Patent-1.0' => 'AOMPL-1.0',
     'unRAR restriction' => 'unRAR-restriction',
     'GPL-2.1[sic]' => 'GPL-2.1-sic',
     'GPL-2.1+[sic]' => 'GPL-2.1-or-later-sic',

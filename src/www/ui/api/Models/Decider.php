@@ -40,6 +40,11 @@ class Decider
    */
   private $ojoDecider;
   /**
+   * @var boolean $thesmoDecider
+   * Thesmo findings are no contradiction with the other scanners' findings
+   */
+  private $thesmoDecider;
+  /**
    * @var string $concludeLicenseType
    * Use this license type to create conclusions.
    */
@@ -70,17 +75,20 @@ class Decider
    * @param string  $concludeLicenseType
    * @param boolean $copyrightDeactivation
    * @param boolean $copyrightClutterRemoval
+   * @param boolean $thesmoDecider
    */
   public function __construct($nomosMonk = false, $bulkReused = false,
                               $newScanner = false, $ojoDecider = false,
                               $concludeLicenseType = "",
                               $copyrightDeactivation = false,
-                              $copyrightClutterRemoval = false)
+                              $copyrightClutterRemoval = false,
+                              $thesmoDecider = false)
   {
     $this->setNomosMonk($nomosMonk);
     $this->setBulkReused($bulkReused);
     $this->setNewScanner($newScanner);
     $this->setOjoDecider($ojoDecider);
+    $this->setThesmoDecider($thesmoDecider);
     $this->setConcludeLicenseType($concludeLicenseType);
     $this->setCopyrightDeactivation($copyrightDeactivation);
     $this->setCopyrightClutterRemoval($copyrightClutterRemoval);
@@ -104,6 +112,9 @@ class Decider
     }
     if (array_key_exists(($version == ApiVersion::V2? "ojoDecider" : "ojo_decider"), $deciderArray)) {
       $this->setOjoDecider($deciderArray[$version == ApiVersion::V2? "ojoDecider" : "ojo_decider"]);
+    }
+    if (array_key_exists(($version == ApiVersion::V2? "thesmoDecider" : "thesmo_decider"), $deciderArray)) {
+      $this->setThesmoDecider($deciderArray[$version == ApiVersion::V2? "thesmoDecider" : "thesmo_decider"]);
     }
     if (array_key_exists(($version == ApiVersion::V2? "concludeLicenseType" : "conclude_license_type"), $deciderArray)) {
       $this->setConcludeLicenseType($deciderArray[$version == ApiVersion::V2? "concludeLicenseType" : "conclude_license_type"]);
@@ -148,6 +159,14 @@ class Decider
   public function getOjoDecider()
   {
     return $this->ojoDecider;
+  }
+
+  /**
+   * @return boolean
+   */
+  public function getThesmoDecider()
+  {
+    return $this->thesmoDecider;
   }
 
   /**
@@ -208,6 +227,14 @@ class Decider
   }
 
   /**
+   * @param boolean $thesmoDecider
+   */
+  public function setThesmoDecider($thesmoDecider)
+  {
+    $this->thesmoDecider = filter_var($thesmoDecider, FILTER_VALIDATE_BOOLEAN);
+  }
+
+  /**
    * @param string $concludeLicenseType
    */
   public function setConcludeLicenseType($concludeLicenseType)
@@ -263,6 +290,7 @@ class Decider
         "bulkReused" => $this->bulkReused,
         "newScanner" => $this->newScanner,
         "ojoDecider" => $this->ojoDecider,
+        "thesmoDecider" => $this->thesmoDecider,
         "concludeLicenseType" => $this->concludeLicenseType,
         "copyrightDeactivation" => $this->copyrightDeactivation,
         "copyrightClutterRemoval" => $this->copyrightClutterRemoval
@@ -273,6 +301,7 @@ class Decider
         "bulk_reused" => $this->bulkReused,
         "new_scanner" => $this->newScanner,
         "ojo_decider" => $this->ojoDecider,
+        "thesmo_decider" => $this->thesmoDecider,
         "conclude_license_type" => $this->concludeLicenseType,
         "copyright_deactivation" => $this->copyrightDeactivation,
         "copyright_clutter_removal" => $this->copyrightClutterRemoval

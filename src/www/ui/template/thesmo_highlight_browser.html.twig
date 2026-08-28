@@ -1,0 +1,216 @@
+{# SPDX-FileCopyrightText: © 2026 Siemens AG
+   SPDX-License-Identifier: GPL-2.0-only #}
+{% extends "include/base.html.twig" %}
+
+{% block styles %}
+  {{ parent() }}
+  <style>
+    /* No min-width: the column is already a fixed share of the table, and a
+       larger minimum makes the cell overflow instead of fitting. */
+    #highlightBrowserTable td.meta-cell { padding: 2px; }
+    .meta-cell textarea { width: 100%; display: block; margin: 0;
+                          box-sizing: border-box; font-size: 0.8em;
+                          resize: vertical; }
+    /* semibordered frames the table; its dashed cell borders are not wanted,
+       so rows are ruled instead. The id beats the class on specificity. */
+    #highlightBrowserTable { table-layout: fixed; }
+    #highlightBrowserTable th,
+    #highlightBrowserTable td { border-left: 0; border-right: 0;
+                                border-top: 1px solid #d5d5dd;
+                                border-bottom: 1px solid #d5d5dd;
+                                padding: 4px 6px;
+                                vertical-align: top; word-wrap: break-word; }
+    #highlightBrowserTable thead th { background: #f3f3f6; padding: 6px; }
+    #highlightBrowserTable tbody tr:nth-child(odd) { background: #fbfbfd; }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+{% if agentId is null %}
+  <div class="alert alert-warning">
+    {{ 'This upload has no thesmo results, so it has no highlights to group.'|trans }}
+  </div>
+{% elseif groups is empty %}
+  <div class="alert alert-info">
+    {{ 'No license in this upload was concluded from an agent finding that thesmo also highlighted.'|trans }}
+  </div>
+{% else %}
+<div class="card shadow-sm">
+  <div class="card-body p-2">
+<table id="highlightBrowserTable" class="semibordered" width="100%"
+       cellpadding="0">
+  <thead>
+    <tr>
+      <th style="width: 14%;">{{ 'License'|trans }}</th>
+      <th style="width: 14%;">{{ 'Highlight'|trans }}</th>
+      <th style="width: 22%;">{{ 'License Text'|trans }}</th>
+      <th style="width: 22%;">{{ 'Acknowledgement'|trans }}</th>
+      <th style="width: 22%;">{{ 'Comment'|trans }}</th>
+      <th style="width: 6%;"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for g in groups %}
+    <tr data-rf="{{ g.licenseId }}" data-len="{{ g.len }}">
+      <td>{{ g.shortName|e }}</td>
+      <td data-order="{{ g.files }}">
+        <a href="{{ viewUri }}&amp;item={{ g.sampleItem }}" target="_blank"
+           title="{{ 'Open a file from this group at its highlight'|trans }}">{{ g.files }}
+          {{ 'files'|trans }}</a>
+        <span class="text-muted">({{ g.len }} {{ 'bytes'|trans }})</span>
+      </td>
+      <td class="meta-cell">
+        {% if g.licenseTextMixed %}
+          <div class="text-warning mixedWarn">{{ 'Files in this row carry different text; saving replaces all of them.'|trans }}</div>
+        {% endif %}
+        <textarea class="licenseTextField form-control form-control-sm" rows="2"
+                  {% if not editable %}readonly{% endif %}>{{ g.licenseText|e }}</textarea>
+      </td>
+      <td class="meta-cell">
+        {% if g.ackMixed %}
+          <div class="text-warning mixedWarn">{{ 'Files in this row carry different text; saving replaces all of them.'|trans }}</div>
+        {% endif %}
+        <textarea class="ackField form-control form-control-sm" rows="2"
+                  {% if not editable %}readonly{% endif %}>{{ g.ack|e }}</textarea>
+      </td>
+      <td class="meta-cell">
+        {% if g.commentMixed %}
+          <div class="text-warning mixedWarn">{{ 'Files in this row carry different text; saving replaces all of them.'|trans }}</div>
+        {% endif %}
+        <textarea class="commentField form-control form-control-sm" rows="2"
+                  {% if not editable %}readonly{% endif %}>{{ g.comment|e }}</textarea>
+      </td>
+      <td>
+        {% if editable %}
+          <button class="saveRow btn btn-primary btn-sm">{{ 'Save'|trans }}</button>
+        {% endif %}
+        <span class="rowStatus"></span>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  {% if unhighlighted is not empty %}
+  <tfoot>
+    <tr>
+      {# the note is about files that have no row, so it spans the table
+         rather than belonging to any column #}
+      <td colspan="6" class="text-muted">
+        {% set total = 0 %}
+        {% for u in unhighlighted %}{% set total = total + u.files %}{% endfor %}
+        {{ total }}
+        {{ 'more cleared file(s) have no thesmo highlight, so they cannot be acknowledged here:'|trans }}
+        {% for u in unhighlighted %}
+          {{ u.shortName|e }} ({{ u.files }}){% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+  </tfoot>
+  {% endif %}
+</table>
+  </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block foot %}
+  {{ parent() }}
+  <script src="scripts/jquery.dataTables.min.js" type="text/javascript"></script>
+  <!-- defines oPagination.listbox, which sPaginationType below selects -->
+  <script src="scripts/jquery.dataTables.select.js" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function () {
+  var ajaxUrl = {{ ajaxUrl|json_encode|raw }};
+  var uploadId = {{ uploadId }};
+
+  function rowKey($tr) {
+    return { upload: uploadId, rf: $tr.data('rf'), len: $tr.data('len') };
+  }
+
+  // One height for every text box, so a row is opened once and not three
+  // times. The equality test stops the writes feeding back through the
+  // observer that triggered them.
+  var fields = $('#highlightBrowserTable').find('textarea');
+  function syncHeights(source) {
+    var h = source.style.height || (source.offsetHeight + 'px');
+    fields.each(function () {
+      if (this !== source && this.style.height !== h) {
+        this.style.height = h;
+      }
+    });
+  }
+  if (window.ResizeObserver) {
+    var observer = new ResizeObserver(function (entries) {
+      syncHeights(entries[entries.length - 1].target);
+    });
+    fields.each(function () { observer.observe(this); });
+  } else {
+    // older browsers: catch the end of the drag instead
+    $('#highlightBrowserTable').on('mouseup', 'textarea', function () {
+      syncHeights(this);
+    });
+  }
+
+  // Over the rows already in the page; there is no ajax source.
+  if ($.fn.DataTable) {
+    $.fn.dataTable.ext.errMode = 'none';
+    $('#highlightBrowserTable').DataTable({
+      "paging": true,
+      "pageLength": 10,
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, {{ 'All'|trans|json_encode|raw }}]],
+      "sPaginationType": "listbox",
+      "stateSave": false,
+      // widths are set in CSS; letting DataTables measure them undoes
+      // table-layout: fixed
+      "autoWidth": false,
+      // the files column carries data-order, so it sorts by count not by text
+      "order": [[1, "desc"]],
+      "columnDefs": [
+        { "targets": -1, "orderable": false, "searchable": false }
+      ],
+      // a page just shown must match the height the others were dragged to
+      "drawCallback": function () {
+        if (fields.length) { syncHeights(fields[0]); }
+      }
+    });
+  }
+
+  $('#highlightBrowserTable').on('click', '.saveRow', function () {
+    var $tr = $(this).closest('tr');
+    var $status = $tr.find('.rowStatus');
+    $status.removeClass('text-danger').text({{ 'saving...'|trans|json_encode|raw }});
+    $.post(ajaxUrl, $.extend({
+      action: 'update',
+      licenseText: $tr.find('.licenseTextField').val(),
+      acknowledgement: $tr.find('.ackField').val(),
+      comment: $tr.find('.commentField').val()
+    }, rowKey($tr)), function (data) {
+      // An expired session answers 200 with an HTML page, which would read
+      // as "undefined" rather than as a failure.
+      if (typeof data !== 'object' || data === null) {
+        $status.addClass('text-danger')
+               .text({{ 'not saved: the server did not answer with JSON -- is the session still valid?'|trans|json_encode|raw }});
+        return;
+      }
+      if (data.error) {
+        $status.addClass('text-danger').text(data.error);
+        return;
+      }
+      $status.text('');
+      // the row no longer disagrees with itself once a text is written
+      $tr.find('.mixedWarn').remove();
+    }).fail(function (xhr) {
+      var detail = '';
+      try {
+        detail = (JSON.parse(xhr.responseText) || {}).error || '';
+      } catch (e) {
+        detail = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim().slice(0, 160);
+      }
+      $status.addClass('text-danger').text(
+        {{ 'not saved'|trans|json_encode|raw }} + ' (HTTP ' + xhr.status + ') ' + detail);
+    });
+  });
+});
+  </script>
+{% endblock %}

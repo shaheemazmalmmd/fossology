@@ -75,6 +75,11 @@ SPDX-License-Identifier: FSFAP
         <service id="dao.highlight" class="Fossology\Lib\Dao\HighlightDao" public="true">
             <argument type="service" id="db.manager"/>
         </service>
+        <service id="dao.thesmo_highlight_browser" class="Fossology\Lib\Dao\ThesmoHighlightBrowserDao" public="true">
+            <argument type="service" id="db.manager"/>
+            <argument type="service" id="dao.upload"/>
+            <argument type="service" id="dao.agent"/>
+        </service>
         <service id="dao.agent" class="Fossology\Lib\Dao\AgentDao" public="true">
             <argument type="service" id="db.manager"/>
             <argument type="service" id="logger"/>

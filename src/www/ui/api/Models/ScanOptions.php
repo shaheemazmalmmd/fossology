@@ -249,6 +249,9 @@ class ScanOptions
     if ($this->decider->getOjoDecider() === true) {
       $deciderRules[] = 'ojoNoContradiction';
     }
+    if ($this->decider->getThesmoDecider() === true) {
+      $deciderRules[] = 'thesmoNoContradiction';
+    }
     if ($this->decider->getCopyrightDeactivation() === true) {
       $deciderRules[] = 'copyrightDeactivation';
     }

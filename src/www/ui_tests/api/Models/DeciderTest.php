@@ -132,6 +132,7 @@ class DeciderTest extends \PHPUnit\Framework\TestCase
         "bulk_reused" => false,
         "new_scanner" => false,
         "ojo_decider" => true,
+        "thesmo_decider" => false,
         "conclude_license_type" => "Permissive",
         "copyright_deactivation" => false,
         "copyright_clutter_removal" => false
@@ -142,6 +143,7 @@ class DeciderTest extends \PHPUnit\Framework\TestCase
         "bulkReused" => false,
         "newScanner" => false,
         "ojoDecider" => true,
+        "thesmoDecider" => false,
         "concludeLicenseType" => "Permissive",
         "copyrightDeactivation" => false,
         "copyrightClutterRemoval" => false
@@ -154,5 +156,98 @@ class DeciderTest extends \PHPUnit\Framework\TestCase
     $actualObject->setConcludeLicenseType(" Permissive ");
 
     $this->assertEquals($expectedArray, $actualObject->getArray($version));
+  }
+
+  /**
+   * The files the Thesmo option crosses on its way to the agent. It is named
+   * here, turned into a string by ScanOptions, and matched as that string by
+   * DeciderAgentPlugin -- and only the first two are code this model can be
+   * held to.
+   */
+  private function sourceOf($what)
+  {
+    $root = dirname(__DIR__, 4);
+    $paths = [
+      "emitted" => $root . '/www/ui/api/Models/ScanOptions.php',
+      "consumed" => $root . '/decider/ui/DeciderAgentPlugin.php',
+    ];
+    $this->assertFileExists($paths[$what]);
+    return file_get_contents($paths[$what]);
+  }
+
+  /**
+   * @test
+   * -# The Thesmo option round-trips under each version's own spelling
+   * -# And a version does not answer to the other's, which would set an
+   *    option on one interface and silently not on the other
+   */
+  public function testThesmoOptionRoundTrips()
+  {
+    foreach ([[ApiVersion::V1, "thesmo_decider", "thesmoDecider"],
+              [ApiVersion::V2, "thesmoDecider", "thesmo_decider"]] as $case) {
+      list($version, $mine, $theirs) = $case;
+
+      $decider = new Decider();
+      $this->assertFalse($decider->getThesmoDecider());
+
+      $decider->setUsingArray([$mine => true], $version);
+      $this->assertTrue($decider->getThesmoDecider());
+      $this->assertTrue($decider->getArray($version)[$mine]);
+
+      $other = new Decider();
+      $other->setUsingArray([$theirs => true], $version);
+      $this->assertFalse($other->getThesmoDecider());
+    }
+  }
+
+  /**
+   * @test
+   * -# A request carries "true" and not true, so the option is read as a
+   *    boolean however it was spelled
+   */
+  public function testThesmoOptionIsReadFromAString()
+  {
+    $decider = new Decider();
+    $decider->setThesmoDecider("true");
+    $this->assertTrue($decider->getThesmoDecider());
+    $decider->setThesmoDecider("false");
+    $this->assertFalse($decider->getThesmoDecider());
+  }
+
+  /**
+   * @test
+   * -# The option string ScanOptions emits is one the agent plugin answers to
+   *
+   * This is the join no type system checks: the plugin matches a literal in a
+   * switch, so a name differing by a letter leaves the option settable,
+   * readable, and with no effect at all.
+   */
+  public function testThesmoOptionStringReachesTheAgent()
+  {
+    $emitted = $this->sourceOf("emitted");
+    $this->assertStringContainsString("getThesmoDecider()", $emitted);
+    $this->assertStringContainsString("'thesmoNoContradiction'", $emitted);
+    $this->assertStringContainsString("case 'thesmoNoContradiction':",
+      $this->sourceOf("consumed"));
+  }
+
+  /**
+   * @test
+   * -# Turning the rule on schedules what it reads: it compares Thesmo
+   *    against nomos and monk, and a scanner that did not run contradicts
+   *    nothing, which would make the check weaker than its name
+   */
+  public function testThesmoRuleSchedulesWhatItReads()
+  {
+    $consumed = $this->sourceOf("consumed");
+    $at = strpos($consumed, "case 'thesmoNoContradiction':");
+    $this->assertNotFalse($at);
+    $arm = substr($consumed, $at, 600);
+    $end = strpos($arm, 'break;');
+    $arm = $end === false ? $arm : substr($arm, 0, $end);
+    foreach (['agent_nomos', 'agent_monk', 'agent_thesmo'] as $agent) {
+      $this->assertStringContainsString($agent, $arm,
+        "the rule does not depend on " . $agent);
+    }
   }
 }

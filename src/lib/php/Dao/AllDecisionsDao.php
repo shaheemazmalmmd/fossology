@@ -44,9 +44,13 @@ class AllDecisionsDao
    */
   public function getAllJobTypeForUpload($uploadId)
   {
-    $extendedQuery = " AND jq_type LIKE 'nomos' OR jq_type LIKE 'monk'".
-                     " OR jq_type LIKE 'ojo' OR jq_type LIKE 'copyright'".
-                     " OR jq_type LIKE 'ecc' OR jq_type LIKE 'ipra'";
+    // Parenthesised: AND binds tighter than OR, so without the brackets only
+    // 'nomos' was constrained by jq_end_bits and only the last type by the
+    // upload -- every other agent matched if it had ever finished anywhere.
+    $extendedQuery = " AND (jq_type LIKE 'nomos' OR jq_type LIKE 'monk'".
+                     " OR jq_type LIKE 'ojo' OR jq_type LIKE 'thesmo'".
+                     " OR jq_type LIKE 'copyright'".
+                     " OR jq_type LIKE 'ecc' OR jq_type LIKE 'ipra')";
     $sql = "SELECT DISTINCT(jq_type) FROM jobqueue INNER JOIN job ON jq_job_fk=job_pk " .
       "WHERE jq_end_bits ='1'".$extendedQuery." AND job_upload_fk=$1;";
     $statementName = __METHOD__ . ".getAllFinishedJobsForUploadId";
@@ -277,7 +281,7 @@ class AllDecisionsDao
     $copyrightPfile = array();
     $eccPfile = array();
     $ipPfile = array();
-    $licenseAgentNames = array('nomos','monk','ojo');
+    $licenseAgentNames = array('nomos','monk','ojo','thesmo');
     $executedAgents = $this->getAllJobTypeForUpload($uploadId);
     foreach ($executedAgents as $agent) {
       if (in_array($agent,$licenseAgentNames)) {

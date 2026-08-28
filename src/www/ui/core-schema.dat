@@ -2894,6 +2894,7 @@
   $Schema["INDEX"]["highlight_kotoba"]["highlight_kotoba_clearing_event_fk_idx"] = "CREATE INDEX highlight_kotoba_clearing_event_fk_idx ON highlight_kotoba USING btree (clearing_event_fk);";
   $Schema["INDEX"]["highlight_kotoba"]["highlight_kotoba_cp_fk_idx"] = "CREATE INDEX highlight_kotoba_cp_fk_idx ON highlight_kotoba USING btree (cp_fk);";
 
+  $Schema["INDEX"]["jobqueue"]["jobqueue_job_type_idx"] = "CREATE INDEX jobqueue_job_type_idx ON jobqueue USING btree (jq_job_fk, jq_type);";
   $Schema["INDEX"]["license_file"]["fl_rf_fk"] = "CREATE INDEX fl_rf_fk ON license_file USING btree (rf_fk);";
   $Schema["INDEX"]["license_file"]["lf_pfile_fk"] = "CREATE INDEX lf_pfile_fk ON license_file USING btree (pfile_fk);";
   $Schema["INDEX"]["license_file"]["lf_agent_fk"] = "CREATE INDEX lf_agent_fk ON license_file USING btree (agent_fk);";

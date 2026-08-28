@@ -637,6 +637,13 @@ class UploadTreeController extends RestController
       $existingLicenseIds[] = intval($currId);
     }
 
+    /* A scanner finding is shown on the item but has no clearing event, so it
+       is not yet a decision. */
+    $concludedLicenseIds = array_keys(
+      $this->clearingDao->getRelevantClearingEvents(
+        $uploadDao->getItemTreeBoundsFromUploadId($uploadTreeId, $uploadId),
+        $this->restHelper->getGroupId()));
+
     foreach (array_keys($body) as $index) {
       $licenseReq = $body[$index];
 
@@ -682,8 +689,15 @@ class UploadTreeController extends RestController
           ];
         }
 
-        if (in_array($existingLicense->getId(), $existingLicenseIds)) {
+        if (in_array($existingLicense->getId(), $concludedLicenseIds)) {
           $valText = "";
+          if (empty($columnsToUpdate)) {
+            $val = new Info(200, $shortName .
+              " is already a license decision on this item; nothing to change.",
+              InfoType::INFO);
+            $success[] = $val->getArray();
+            continue;
+          }
           foreach (array_keys($columnsToUpdate) as $colIdx) {
             $this->clearingDao->updateClearingEvent($uploadTreeId, $this->restHelper->getUserId(), $this->restHelper->getGroupId(), $existingLicense->getId(), $columnsToUpdate[$colIdx]['columnId'], $columnsToUpdate[$colIdx]['value']);
             if ($colIdx == count($columnsToUpdate) - 1 && count($columnsToUpdate) > 1) {

@@ -845,6 +845,8 @@ namespace Fossology\UI\Api\Test\Controllers {
         ->withArgs(["uploadtree", "uploadtree_pk", $itemId])->andReturn(true);
       $this->uploadDao->shouldReceive('getItemTreeBoundsFromUploadId')->withArgs([$itemId, $uploadId])->andReturn($itemTreeBounds);
       $this->concludeLicensePlugin->shouldReceive('getCurrentSelectedLicensesTableData')->withArgs([$itemTreeBounds, $this->groupId, true])->andReturn($existingLicenses);
+      $this->clearingDao->shouldReceive('getRelevantClearingEvents')
+        ->withArgs([$itemTreeBounds, $this->groupId])->andReturn([]);
       $this->licenseDao->shouldReceive('getLicenseByShortName')
         ->withArgs([$shortName, $this->groupId])->andReturn($license);
       $this->clearingDao->shouldReceive('insertClearingEvent')
@@ -904,6 +906,9 @@ namespace Fossology\UI\Api\Test\Controllers {
         ->withArgs(["uploadtree", "uploadtree_pk", $itemId])->andReturn(true);
       $this->uploadDao->shouldReceive('getItemTreeBoundsFromUploadId')->withArgs([$itemId, $uploadId])->andReturn($itemTreeBounds);
       $this->concludeLicensePlugin->shouldReceive('getCurrentSelectedLicensesTableData')->withArgs([$itemTreeBounds, $this->groupId, true])->andReturn($existingLicenses);
+      $this->clearingDao->shouldReceive('getRelevantClearingEvents')
+        ->withArgs([$itemTreeBounds, $this->groupId])
+        ->andReturn([$licenseId => M::mock(ClearingEvent::class)]);
       $this->licenseDao->shouldReceive('getLicenseByShortName')
         ->withArgs([$shortName, $this->groupId])->andReturn($license);
       $this->clearingDao->shouldReceive('updateClearingEvent')
@@ -963,6 +968,9 @@ namespace Fossology\UI\Api\Test\Controllers {
         ->withArgs(["uploadtree", "uploadtree_pk", $itemId])->andReturn(true);
       $this->uploadDao->shouldReceive('getItemTreeBoundsFromUploadId')->withArgs([$itemId, $uploadId])->andReturn($itemTreeBounds);
       $this->concludeLicensePlugin->shouldReceive('getCurrentSelectedLicensesTableData')->withArgs([$itemTreeBounds, $this->groupId, true])->andReturn($existingLicenses);
+      $this->clearingDao->shouldReceive('getRelevantClearingEvents')
+        ->withArgs([$itemTreeBounds, $this->groupId])
+        ->andReturn([$licenseId => M::mock(ClearingEvent::class)]);
       $this->licenseDao->shouldReceive('getLicenseByShortName')
         ->withArgs([$shortName, $this->groupId])->andReturn($license);
       $this->clearingDao->shouldReceive('insertClearingEvent')
